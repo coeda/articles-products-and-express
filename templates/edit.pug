@@ -4,8 +4,12 @@ block title
   title #{id}
 
 block body
-  input#name(placeholder=name)
-  br
-  input#price(placeholder=price)
-  br
-  input#inventory(placeholder=inventory)
+  form(method = "put")
+    p #{param1}:
+      input(name = param1, value = subParam1)
+    p #{param2}:
+      input(name = param2, value = subParam2)
+    p #{param3}:
+      input(name = param3, value = subParam3)
+    button(type="submit" formmethod="post" formaction="/" + location + "/" + id +'?_method=put')
+      ='submit'

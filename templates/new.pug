@@ -1,0 +1,16 @@
+extends ./layout.pug
+
+block title
+  title #{location}
+
+block body
+  form(method = "post")
+    p #{param1}:
+      input(name = param1, value = subParam1)
+    p #{param2}:
+      input(name = param2, value = subParam2)
+    p #{param3}:
+      input(name = param3, value = subParam3)
+    button(type="submit" formmethod="post" formaction="/" + location)
+      ='submit'
+

@@ -25,8 +25,8 @@ router.route('/')
 
 router.route('/:id')
   .put((req, res) => {
+    let foundProduct = false;
     let newSavedProducts = savedProducts.map((product) => {
-      let foundProduct = false;
       if(product.id.toString() === req.params.id){
         let newProduct = {
           id: req.params.id,
@@ -72,10 +72,25 @@ router.route('/:id/edit')
       }
     })[0];
     res.render('edit', {
+      location: 'products',
+      param1: 'name',
+      param2: 'price',
+      param3: 'inventory',
       id: req.params.id,
-      name: selectedProduct.name,
-      price: selectedProduct.price,
-      inventory: selectedProduct.inventory
+      subParam1: selectedProduct.name,
+      subParam2: selectedProduct.price,
+      subParam3: selectedProduct.inventory
+    });
+  });
+
+router.route('/new')
+  .get((req,res) => {
+    res.render('new', {
+      location: 'products',
+      param1: 'name',
+      param2: 'price',
+      param3: 'inventory',
+      id: productId,
     });
   });
 
