@@ -6,7 +6,6 @@ const articleDb = require('../db/articles.js');
 
 router.route('/')
   .get((req, res) => {
-    console.log(articleDb.savedArticles);
     let articles = articleIndexFunction('Articles', articleDb.savedArticles);
     res.render('index', {
       title: 'Articles',

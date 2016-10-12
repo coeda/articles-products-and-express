@@ -1,40 +1,42 @@
 let savedProducts = [];
+let productId = 0;
 
 let newProduct = (request) => {
   let product = {
-    title: request.title,
-    body: request.body,
-    author: request.author,
-    urlTitle: encodeURI(request.title)
+    name: request.name,
+    price: request.price,
+    inventory: request.inventory,
+    id: productId
   };
   savedProducts.push(product);
+  productId += 1;
   return true;
 };
 
-let editArticle = (request) => {
+let editProduct = (request) => {
   console.log('hit edit');
-  let foundArticle = false;
-  savedArticles = savedArticles.map((article) => {
-    if(article.title.toString() === request.paramTitle){
+  let foundProduct = false;
+  savedProducts = savedProducts.map((product) => {
+    if(product.id.toString() === request.paramId){
       let newProduct = {
-        title: request.title,
-        body: request.body,
-        author: request.author,
-        urlTitle: encodeURI(request.title)
+        name: request.name,
+        price: request.price,
+        inventory: request.inventory,
+        id: request.paramId,
       };
-      foundArticle = true;
+      foundProduct = true;
       return newProduct;
     } else {
-      return article;
+      return product;
     }
   });
-  console.log('savedArticles: ' + savedArticles);
-  return savedArticles;
+  console.log('savedProducts: ' + savedProducts);
+  return savedProducts;
 };
 
-let deleteArticle = (request) => {
-  let foundArticle = false;
-  let newSavedArticles = savedArticles.filter((article) => {
+let deleteProduct = (request) => {
+  let foundProduct = false;
+  let newSavedProducts = savedProducts.filter((article) => {
     if(article.title.toString() !== request.title){
       return article;
     } else {
@@ -42,9 +44,9 @@ let deleteArticle = (request) => {
     }
   });
   if(foundProduct === true){
-    savedArticles = newSavedArticles;
+    savedProducts = newSavedProducts;
   }
-  return foundArticle;
+  return foundProduct;
 };
 
-module.exports = {newProduct: newProduct, editArticle: editArticle, savedArticles: savedArticles};
+module.exports = {newProduct: newProduct, editProduct: editProduct, savedProducts: savedProducts, productId:productId};

@@ -3,12 +3,10 @@ const router = express.Router();
 const productIndexFunction = require('./indexgenerator.js');
 const getProduct = require('./getitem.js');
 const productDb = require('../db/products.js');
-let savedProducts = [];
-let productId = 0;
 
 router.route('/')
   .get((req, res) => {
-    let products = productIndexFunction('Products', savedProducts);
+    let products = productIndexFunction('Products', productDb.savedProducts);
     res.render('index', {
       title: 'Products',
       items: products,
@@ -18,39 +16,15 @@ router.route('/')
   })
 
   .post((req, res) => {
-    let product = {
-      id: productId,
-      name: req.body.name,
-      price: req.body.price,
-      inventory: req.body.inventory
-    };
-    savedProducts.push(product);
-    productId += 1;
-    console.log(savedProducts);
-    res.send({ "success": 'true'});
+    let pass = productDb.newProduct(req.body);
+    res.send({ "success": pass});
   });
 
 router.route('/:id')
   .put((req, res) => {
-    let foundProduct = false;
-    let newSavedProducts = savedProducts.map((product) => {
-      if(product.id.toString() === req.params.id){
-        let newProduct = {
-          id: req.params.id,
-          name: req.body.name,
-          price: req.body.price,
-          inventory: req.body.inventory
-        };
-        foundProduct = true;
-        return newProduct;
-      } else {
-        return product;
-      }
-    });
-    if(foundProduct){
-      savedProducts = newSavedProducts;
-    }
-    res.send({ "success": foundProduct});
+    req.body.paramId = req.params.id;
+    let success = productDb.editProduct(req.body);
+    res.send({ "success": success});
   })
 
   .delete((req, res) => {
@@ -71,7 +45,7 @@ router.route('/:id')
 
 router.route('/:id/edit')
   .get((req, res) => {
-    selectedProduct = getProduct('Product', savedProducts, req.params.id);
+    selectedProduct = getProduct('Product', productDb.savedProducts, req.params.id);
     res.render('edit', {
       location: 'products',
       param1: 'name',
@@ -91,7 +65,7 @@ router.route('/new')
       param1: 'name',
       param2: 'price',
       param3: 'inventory',
-      id: productId,
+      id: productDb.productId,
     });
   });
 
