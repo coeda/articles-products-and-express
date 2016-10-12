@@ -1,6 +1,14 @@
 let savedProducts = [];
 let productId = 0;
 
+let getProducts = () => {
+  return savedProducts;
+};
+
+let getProductId = () => {
+  return productId;
+};
+
 let newProduct = (request) => {
   let product = {
     name: request.name,
@@ -30,15 +38,14 @@ let editProduct = (request) => {
       return product;
     }
   });
-  console.log('savedProducts: ' + savedProducts);
-  return savedProducts;
+  return foundProduct;
 };
 
 let deleteProduct = (request) => {
   let foundProduct = false;
-  let newSavedProducts = savedProducts.filter((article) => {
-    if(article.title.toString() !== request.title){
-      return article;
+  let newSavedProducts = savedProducts.filter((product) => {
+    if(product.id.toString() !== request.paramId){
+      return product;
     } else {
       foundProduct = true;
     }
@@ -49,4 +56,4 @@ let deleteProduct = (request) => {
   return foundProduct;
 };
 
-module.exports = {newProduct: newProduct, editProduct: editProduct, savedProducts: savedProducts, productId:productId};
+module.exports = {newProduct: newProduct, editProduct: editProduct, deleteProduct: deleteProduct, getProducts: getProducts, getProductId:getProductId};

@@ -6,7 +6,7 @@ const productDb = require('../db/products.js');
 
 router.route('/')
   .get((req, res) => {
-    let products = productIndexFunction('Products', productDb.savedProducts);
+    let products = productIndexFunction('Products', productDb.getProducts());
     res.render('index', {
       title: 'Products',
       items: products,
@@ -28,24 +28,14 @@ router.route('/:id')
   })
 
   .delete((req, res) => {
-    let foundProduct = false;
-    let newSavedProducts = savedProducts.filter((product) => {
-      if(product.id.toString() !== req.params.id){
-        return product;
-      } else {
-        foundProduct = true;
-      }
-    });
-    if(foundProduct === true){
-      console.log(newSavedProducts);
-      savedProducts = newSavedProducts;
-    }
+    req.body.paramId = req.params.id;
+    let foundProduct = productDb.deleteProduct(req.body);
     res.send({"success": foundProduct});
   });
 
 router.route('/:id/edit')
   .get((req, res) => {
-    selectedProduct = getProduct('Product', productDb.savedProducts, req.params.id);
+    selectedProduct = getProduct('Product', productDb.getProducts(), req.params.id);
     res.render('edit', {
       location: 'products',
       param1: 'name',
@@ -65,7 +55,7 @@ router.route('/new')
       param1: 'name',
       param2: 'price',
       param3: 'inventory',
-      id: productDb.productId,
+      id: productDb.getProductId(),
     });
   });
 

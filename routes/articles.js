@@ -6,7 +6,7 @@ const articleDb = require('../db/articles.js');
 
 router.route('/')
   .get((req, res) => {
-    let articles = articleIndexFunction('Articles', articleDb.savedArticles);
+    let articles = articleIndexFunction('Articles', articleDb.getArticles());
     res.render('index', {
       title: 'Articles',
       items: articles,
@@ -24,8 +24,6 @@ router.route('/:title')
   .put((req, res) => {
     req.body.paramTitle = req.params.title;
     let success = articleDb.editArticle(req.body);
-    console.log(success);
-    console.log('articleDB: ' + articleDb.savedArticles);
     res.send({ "success": success});
   })
 
@@ -36,7 +34,7 @@ router.route('/:title')
 
   router.route('/:title/edit')
     .get((req,res) => {
-      selectedArticle = getArticle('Article', articleDb.savedArticles, req.params.title);
+      selectedArticle = getArticle('Article', articleDb.getArticles(), req.params.title);
       res.render('edit', {
         location: 'articles',
         param1: 'title',

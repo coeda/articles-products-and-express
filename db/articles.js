@@ -1,5 +1,8 @@
 let savedArticles = [];
 
+let getArticles = () => {
+  return savedArticles;
+};
 let newArticle = (request) => {
   let article = {
     title: request.title,
@@ -47,4 +50,4 @@ let deleteArticle = (request) => {
   return foundArticle;
 };
 
-module.exports = {newArticle: newArticle, editArticle: editArticle, savedArticles: savedArticles};
+module.exports = {newArticle: newArticle, editArticle: editArticle, getArticles: getArticles};
