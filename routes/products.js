@@ -1,34 +1,19 @@
 const express = require('express');
 const router = express.Router();
+const productIndexFunction = require('./indexgenerator.js');
+const getProduct = require('./getitem.js');
+const productDb = require('../db/products.js');
 let savedProducts = [];
 let productId = 0;
 
 router.route('/')
   .get((req, res) => {
-    let editable = true;
-    let edit = '/edit';
-    let onlyName = savedProducts.map((product) => {
-      let returnedProduct = {
-        title: product.name,
-        urlTitle: product.id
-      };
-      return returnedProduct;
-    });
-    if(onlyName.length === 0){
-      onlyName.push({
-        title: "There are no products available, create new product",
-        urlTitle: '',
-      });
-      editable = false;
-    }
-    if(!editable){
-      edit = '/new';
-    }
+    let products = productIndexFunction('Products', savedProducts);
     res.render('index', {
       title: 'Products',
-      items: onlyName,
+      items: products,
       type: '/products',
-      edit: edit
+      edit: products[0].edit
     });
   })
 
@@ -66,7 +51,6 @@ router.route('/:id')
       savedProducts = newSavedProducts;
     }
     res.send({ "success": foundProduct});
-
   })
 
   .delete((req, res) => {
@@ -87,12 +71,7 @@ router.route('/:id')
 
 router.route('/:id/edit')
   .get((req, res) => {
-    //do get stuff
-    let selectedProduct = savedProducts.filter((product) => {
-      if(product.id.toString() === req.params.id){
-        return product;
-      }
-    })[0];
+    selectedProduct = getProduct('Product', savedProducts, req.params.id);
     res.render('edit', {
       location: 'products',
       param1: 'name',

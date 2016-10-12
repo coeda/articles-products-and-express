@@ -1,98 +1,43 @@
 const express = require('express');
 const router = express.Router();
-let savedArticles = [];
+const articleIndexFunction = require('./indexgenerator.js');
+const getArticle = require('./getitem.js');
+const articleDb = require('../db/articles.js');
 
 router.route('/')
   .get((req, res) => {
-    let editable = true;
-    let edit = '/edit';
-    let onlyTitle = savedArticles.map((article) => {
-      let returnedArticle = {
-        title: article.title,
-        urlTitle: article.urlTitle
-      };
-      return returnedArticle;
-    });
-    if(onlyTitle.length === 0){
-      onlyTitle.push({
-        title: 'There are no articles available, create new article',
-        urlTitle: ''
-      });
-      editable = false;
-    }
-    if(!editable){
-      edit = '/new';
-    }
+    console.log(articleDb.savedArticles);
+    let articles = articleIndexFunction('Articles', articleDb.savedArticles);
     res.render('index', {
       title: 'Articles',
-      items: onlyTitle,
+      items: articles,
       type: '/articles',
-      edit: edit
+      edit: articles[0].edit
     });
   })
 
   .post((req, res) => {
-    //post stuff
-    let article = {
-      title: req.body.title,
-      body: req.body.body,
-      author: req.body.author,
-      urlTitle: encodeURI(req.body.title)
-    };
-    savedArticles.push(article);
-    console.log(savedArticles);
-    res.send({"success": 'true'});
+    let pass = articleDb.newArticle(req.body);
+    res.send({"success": pass});
   });
 
 router.route('/:title')
   .put((req, res) => {
-    //put
-    let foundArticle = false;
-    let newSavedArticles = savedArticles.map((article) => {
-      if(article.title.toString() === req.params.title){
-        let newArticle = {
-          title: req.body.title,
-          body: req.body.body,
-          author: req.body.author,
-          urlTitle: encodeURI(req.body.title)
-        };
-        foundArticle = true;
-        return newArticle;
-      } else {
-        return article;
-      }
-    });
-    if(foundArticle){
-      savedArticles = newSavedArticles;
-    }
-    res.send({ "success": foundArticle});
-
-
+    req.body.paramTitle = req.params.title;
+    let success = articleDb.editArticle(req.body);
+    console.log(success);
+    console.log('articleDB: ' + articleDb.savedArticles);
+    res.send({ "success": success});
   })
 
   .delete((req, res) => {
-    let foundArticle = false;
-    let newSavedArticles = savedArticles.filter((article) => {
-      if(article.title.toString() !== req.params.title){
-        return article;
-      } else {
-        foundProduct = true;
-      }
-    });
-    if(foundProduct === true){
-      console.log(newSavedArticles);
-      savedArticles = newSavedArticles;
-    }
-    res.send({"success": foundArticle});
+    let success = articleDb.deleteArticle(req.params);
+    res.send({"success": success});
   });
 
   router.route('/:title/edit')
     .get((req,res) => {
-      let selectedArticle = savedArticles.filter((article) => {
-        if(article.title.toString() === req.params.title){
-          return article;
-        }
-      })[0];
+      selectedArticle = getArticle('Article', articleDb.savedArticles, req.params.title);
       res.render('edit', {
         location: 'articles',
         param1: 'title',
