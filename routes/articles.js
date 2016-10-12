@@ -4,8 +4,31 @@ let savedArticles = [];
 
 router.route('/')
   .get((req, res) => {
-    //Get stuff
-
+    let editable = true;
+    let edit = '/edit';
+    let onlyTitle = savedArticles.map((article) => {
+      let returnedArticle = {
+        title: article.title,
+        urlTitle: article.urlTitle
+      };
+      return returnedArticle;
+    });
+    if(onlyTitle.length === 0){
+      onlyTitle.push({
+        title: 'There are no articles available, create new article',
+        urlTitle: ''
+      });
+      editable = false;
+    }
+    if(!editable){
+      edit = '/new';
+    }
+    res.render('index', {
+      title: 'Articles',
+      items: onlyTitle,
+      type: '/articles',
+      edit: edit
+    });
   })
 
   .post((req, res) => {
@@ -48,7 +71,6 @@ router.route('/:title')
   })
 
   .delete((req, res) => {
-    //delete
     let foundArticle = false;
     let newSavedArticles = savedArticles.filter((article) => {
       if(article.title.toString() !== req.params.title){

@@ -17,7 +17,10 @@ app.use('/products', products);
 
 app.get('/', (req, res) => {
   res.render('index', {
-    response: 'Hello',
+    title: 'Welcome to my Articles and Products',
+    items: [{title: 'Articles', urlTitle: 'articles'}, {title: 'Products', urlTitle: 'products'}],
+    type: '',
+    edit: '',
   });
 });
 

@@ -5,8 +5,30 @@ let productId = 0;
 
 router.route('/')
   .get((req, res) => {
+    let editable = true;
+    let edit = '/edit';
+    let onlyName = savedProducts.map((product) => {
+      let returnedProduct = {
+        title: product.name,
+        urlTitle: product.id
+      };
+      return returnedProduct;
+    });
+    if(onlyName.length === 0){
+      onlyName.push({
+        title: "There are no products available, create new product",
+        urlTitle: '',
+      });
+      editable = false;
+    }
+    if(!editable){
+      edit = '/new';
+    }
     res.render('index', {
-      title: 'Products'
+      title: 'Products',
+      items: onlyName,
+      type: '/products',
+      edit: edit
     });
   })
 
