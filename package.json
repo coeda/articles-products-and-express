@@ -16,5 +16,11 @@
   "bugs": {
     "url": "https://github.com/coeda/articles-products-and-express/issues"
   },
-  "homepage": "https://github.com/coeda/articles-products-and-express#readme"
+  "homepage": "https://github.com/coeda/articles-products-and-express#readme",
+  "dependencies": {
+    "body-parser": "^1.15.2",
+    "express": "^4.14.0",
+    "method-override": "^2.3.6",
+    "pug": "^2.0.0-beta6"
+  }
 }
