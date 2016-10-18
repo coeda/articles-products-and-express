@@ -1,12 +1,10 @@
-let savedProducts = [];
-let productId = 0;
+const db = require('./connect.js');
 
 let getProducts = () => {
-  return savedProducts;
-};
-
-let getProductId = () => {
-  return productId;
+  return db.query('SELECT * FROM products')
+    .catch(error => {
+      console.error(error);
+    });
 };
 
 let newProduct = (request) => {
@@ -14,46 +12,24 @@ let newProduct = (request) => {
     name: request.name,
     price: request.price,
     inventory: request.inventory,
-    id: productId
   };
-  savedProducts.push(product);
-  productId += 1;
-  return true;
+  return db.query('INSERT INTO products (name, price, inventory) VALUES (${name}, ${price}, ${inventory})', product)
+    .catch(error => {
+      console.error(error);
+    });
 };
 
 let editProduct = (request) => {
-  console.log('hit edit');
-  let foundProduct = false;
-  savedProducts = savedProducts.map((product) => {
-    if(product.id.toString() === request.paramId){
-      let newProduct = {
-        name: request.name,
-        price: request.price,
-        inventory: request.inventory,
-        id: request.paramId,
-      };
-      foundProduct = true;
-      return newProduct;
-    } else {
-      return product;
-    }
-  });
-  return foundProduct;
+  let newProduct = {
+    name: request.name,
+    price: request.price,
+    inventory: request.inventory
+  };
+  return db.query('UPDATE products SET name = ${name}, price = ${price}, inventory = ${inventory}', newProduct);
 };
 
 let deleteProduct = (request) => {
-  let foundProduct = false;
-  let newSavedProducts = savedProducts.filter((product) => {
-    if(product.id.toString() !== request.paramId){
-      return product;
-    } else {
-      foundProduct = true;
-    }
-  });
-  if(foundProduct === true){
-    savedProducts = newSavedProducts;
-  }
-  return foundProduct;
+  return db.query('DELETE FROM products WHERE id = ${paramID}', request);
 };
 
-module.exports = {newProduct: newProduct, editProduct: editProduct, deleteProduct: deleteProduct, getProducts: getProducts, getProductId:getProductId};
+module.exports = {newProduct: newProduct, editProduct: editProduct, deleteProduct: deleteProduct, getProducts: getProducts};

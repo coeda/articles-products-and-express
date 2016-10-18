@@ -2,7 +2,7 @@ let getItem = (type, arr, param) =>{
   let title;
   let selectedItem = arr.filter((item) => {
     if(type === 'Article'){
-      title = item.title.toString();
+      title = item.title;
     } else if(type === 'Product') {
       title = item.id.toString();
     }

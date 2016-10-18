@@ -1,0 +1,7 @@
+GET / Mon Oct 17 2016 14:20:51 GMT-1000 (HST)
+PUT /articles/My%20First%20Article?_method=put Mon Oct 17 2016 14:09:44 GMT-1000 (HST)
+GET /articles/My%20First%20Article/edit Mon Oct 17 2016 14:09:31 GMT-1000 (HST)
+GET /articles Mon Oct 17 2016 14:09:29 GMT-1000 (HST)
+GET /products/1/edit Mon Oct 17 2016 14:09:17 GMT-1000 (HST)
+GET /products Mon Oct 17 2016 14:09:09 GMT-1000 (HST)
+

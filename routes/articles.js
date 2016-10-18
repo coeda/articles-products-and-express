@@ -6,44 +6,55 @@ const articleDb = require('../db/articles.js');
 
 router.route('/')
   .get((req, res) => {
-    let articles = articleIndexFunction('Articles', articleDb.getArticles());
-    res.render('index', {
-      title: 'Articles',
-      items: articles,
-      type: '/articles',
-      edit: articles[0].edit
+    let articles = articleIndexFunction('Articles')
+    .then(data => {
+      res.render('index', {
+        title: 'Articles',
+        items: data,
+        type: '/articles',
+        edit: data[0].edit
+      });
     });
   })
 
   .post((req, res) => {
-    let pass = articleDb.newArticle(req.body);
-    res.send({"success": pass});
+    articleDb.newArticle(req.body)
+    .then(() => {
+      res.send({"success": true});
+    });
   });
 
 router.route('/:title')
   .put((req, res) => {
     req.body.paramTitle = req.params.title;
-    let success = articleDb.editArticle(req.body);
-    res.send({ "success": success});
+    articleDb.editArticle(req.body)
+    .then(() => {
+      res.send({ "success": true});
+    });
   })
 
   .delete((req, res) => {
-    let success = articleDb.deleteArticle(req.params);
-    res.send({"success": success});
+    articleDb.deleteArticle(req.params)
+    .then(()=>{
+      res.send({"success": true});
+    });
   });
 
   router.route('/:title/edit')
     .get((req,res) => {
-      selectedArticle = getArticle('Article', articleDb.getArticles(), req.params.title);
-      res.render('edit', {
-        location: 'articles',
-        param1: 'title',
-        param2: 'body',
-        param3: 'author',
-        id: req.params.title,
-        subParam1: selectedArticle.title,
-        subParam2: selectedArticle.body,
-        subParam3: selectedArticle.author
+      articleDb.getArticles()
+      .then( data => {
+        selectedArticle = getArticle('Article', data, req.params.title);
+        res.render('edit', {
+          location: 'articles',
+          param1: 'title',
+          param2: 'body',
+          param3: 'author',
+          id: req.params.title,
+          subParam1: selectedArticle.title,
+          subParam2: selectedArticle.body,
+          subParam3: selectedArticle.author
+        });
       });
     });
 

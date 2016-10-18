@@ -6,45 +6,63 @@ const productDb = require('../db/products.js');
 
 router.route('/')
   .get((req, res) => {
-    let products = productIndexFunction('Products', productDb.getProducts());
-    res.render('index', {
-      title: 'Products',
-      items: products,
-      type: '/products',
-      edit: products[0].edit
+    let products = productIndexFunction('Products')
+    .then(data => {
+      res.render('index', {
+        title: 'Products',
+        items: data,
+        type: '/products',
+        edit: data[0].edit
+      });
     });
   })
 
   .post((req, res) => {
-    let pass = productDb.newProduct(req.body);
-    res.send({ "success": pass});
+    productDb.newProduct(req.body)
+    .then(() => {
+      res.send({ "success": true});
+    })
+    .catch(error => {
+      res.send({ "success" : false});
+    });
+
   });
 
 router.route('/:id')
   .put((req, res) => {
     req.body.paramId = req.params.id;
-    let success = productDb.editProduct(req.body);
-    res.send({ "success": success});
+    productDb.editProduct(req.body)
+    .then(() => {
+      res.send({ "success": true});
+    });
   })
 
   .delete((req, res) => {
     req.body.paramId = req.params.id;
     let foundProduct = productDb.deleteProduct(req.body);
     res.send({"success": foundProduct});
+
+    productDb.deleteProduct(req.params)
+      .then(() => {
+        res.send({"success" : false});
+      });
   });
 
 router.route('/:id/edit')
   .get((req, res) => {
-    selectedProduct = getProduct('Product', productDb.getProducts(), req.params.id);
-    res.render('edit', {
-      location: 'products',
-      param1: 'name',
-      param2: 'price',
-      param3: 'inventory',
-      id: req.params.id,
-      subParam1: selectedProduct.name,
-      subParam2: selectedProduct.price,
-      subParam3: selectedProduct.inventory
+    productDb.getProducts()
+    .then( data => {
+      selectedProduct = getProduct('Product', data, req.params.id);
+      res.render('edit', {
+        location: 'products',
+        param1: 'name',
+        param2: 'price',
+        param3: 'inventory',
+        id: req.params.id,
+        subParam1: selectedProduct.name,
+        subParam2: selectedProduct.price,
+        subParam3: selectedProduct.inventory
+      });
     });
   });
 
@@ -54,8 +72,7 @@ router.route('/new')
       location: 'products',
       param1: 'name',
       param2: 'price',
-      param3: 'inventory',
-      id: productDb.getProductId(),
+      param3: 'inventory'
     });
   });
 
